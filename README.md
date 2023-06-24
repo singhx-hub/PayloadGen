@@ -29,7 +29,7 @@ PayloadGen is a graphical user interface (GUI) tool that helps you generate dyna
 
 1. Run the application:
 
-         python payloadgen.py
+         python3 payloadgen.py
 
  Enter the IP address (LHOST) and port number (LPORT) for the reverse shell payload.
 
