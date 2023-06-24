@@ -39,6 +39,9 @@ PayloadGen is a graphical user interface (GUI) tool that helps you generate dyna
 
 5. The generated payload command will be displayed in the text box. You can copy it to the clipboard by clicking the "Copy" button.
 
+   ![image](https://github.com/singhx-hub/PayloadGen/assets/126919241/10726836-e5d5-44d0-a1e7-e334a7f2e9c3)
+
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
